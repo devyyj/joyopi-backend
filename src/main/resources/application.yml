@@ -1,0 +1,53 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE  # H2 메모리 데이터베이스 연결 URL
+    driverClassName: org.h2.Driver                                   # H2 데이터베이스 드라이버 클래스
+    username: sa                                                      # 데이터베이스 사용자 이름
+    password: password                                                # 데이터베이스 비밀번호
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect                # JPA에서 사용하는 데이터베이스 플랫폼 설정
+    hibernate:
+      ddl-auto: update                                                # Hibernate의 DDL 자동 업데이트 설정 (테이블 자동 생성 및 수정)
+    show-sql: true                                                     # SQL 쿼리를 콘솔에 출력하도록 설정
+
+  h2:
+    console:
+      enabled: true                                                    # H2 콘솔을 활성화하여 브라우저에서 접근 가능하도록 설정
+      path: /h2-console                                                 # H2 콘솔의 접근 경로
+
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-id: 2be6c80ecf9fed1e9b15ac05d13a2bc4      # 카카오 개발자 사이트에서 발급받은 클라이언트 ID
+            redirect-uri: http://localhost:8080/login/oauth2/code/kakao  # 리다이렉트 URI
+            authorization-grant-type: authorization_code
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
+
+logging:
+  level:
+    root: INFO                                                         # 루트 로거의 기본 레벨을 INFO로 설정 (애플리케이션 전체 로깅 레벨)
+    com.example.springbootboilerplate: DEBUG                           # 특정 패키지의 로그는 DEBUG 레벨로 설정
+    org.springframework.security: DEBUG
+
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %5p [%t] %logger{36} - %msg%n"  # 콘솔에 출력되는 로그 메시지 형식
+    file: "%d{yyyy-MM-dd HH:mm:ss} - %5p [%t] %logger{36} - %msg%n"     # 파일에 출력되는 로그 메시지 형식
+
+  file:
+    name: logs/myapp.log                                               # 로그를 'logs/myapp.log' 파일에 저장
+
+  # 로그 레벨 조정 및 로그 롤링 설정
+  logback:
+    rollingPolicy:
+      file-name-pattern: logs/myapp-%d{yyyy-MM-dd}.%i.log               # 롤링되는 로그 파일의 이름 패턴 (날짜별로 로그 파일이 생성됨)
+      max-history: 30                                                   # 보관할 로그 파일의 최대 개수 (최대 30일치 로그 파일 보관)
+      max-file-size: 10MB                                               # 각 로그 파일의 최대 크기 (10MB)
+      total-size-cap: 100MB                                             # 로그 파일들의 총 크기 제한 (100MB)
