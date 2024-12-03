@@ -1,8 +1,10 @@
 package com.example.springbootboilerplate.common.security;
 
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
@@ -16,11 +18,16 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     public OAuth2User loadUser(OAuth2UserRequest userRequest) {
         OAuth2User oAuth2User = super.loadUser(userRequest);
 
-        Map<String, Object> attributes = oAuth2User.getAttributes(); // 사용자 정보 Map
+        // ClientRegistration에서 user-name-attribute 가져오기
+        String nameAttributeKey = userRequest.getClientRegistration()
+                .getProviderDetails()
+                .getUserInfoEndpoint()
+                .getUserNameAttributeName();
 
-        String token = "token";
+        // 권한 설정
+        List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_USER"));
 
-        // 사용자 정보 커스터마이징
-        return new CustomOAuth2User(attributes, List.of(new SimpleGrantedAuthority("ROLE_USER")), token);
+        // DefaultOAuth2User 반환
+        return new DefaultOAuth2User(authorities, oAuth2User.getAttributes(), nameAttributeKey);
     }
 }
