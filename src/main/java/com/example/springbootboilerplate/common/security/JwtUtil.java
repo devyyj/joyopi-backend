@@ -22,14 +22,14 @@ import java.util.UUID;
 @Setter
 @Component
 public class JwtUtil {
-    private long expirationTime;
+    @Value("${jwt.expiration}")
+    private Long expirationTime;
 
-    private SecretKey key;
+    private final SecretKey key;
 
     // 생성자에서 secretKey를 설정
-    public JwtUtil(@Value("${jwt.secret}") String secretKey, @Value("${jwt.expiration}") long expirationTime) {
+    public JwtUtil(@Value("${jwt.secret}") String secretKey) {
         this.key = Keys.hmacShaKeyFor(Decoders.BASE64URL.decode(secretKey)); // Base64로 디코딩 후 SecretKey로 변환
-        this.expirationTime = expirationTime;
     }
 
     /**
@@ -68,17 +68,7 @@ public class JwtUtil {
             throw new CustomException(HttpStatus.INTERNAL_SERVER_ERROR, "JWT expired");
         } catch (Exception e) {
             log.error(e.toString());
-            throw new CustomException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+            throw new CustomException(HttpStatus.INTERNAL_SERVER_ERROR, "알 수 없는 예외");
         }
-    }
-
-    /**
-     * JWT 토큰을 리프레시하거나 재발급합니다.
-     *
-     * @param token 기존 JWT 토큰
-     * @return 새로운 JWT 토큰
-     */
-    String refreshToken(String token) {
-        return null;
     }
 }
