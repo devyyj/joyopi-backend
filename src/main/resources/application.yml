@@ -3,7 +3,7 @@ spring:
     url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE  # H2 메모리 데이터베이스 연결 URL
     driverClassName: org.h2.Driver                                   # H2 데이터베이스 드라이버 클래스
     username: sa                                                      # 데이터베이스 사용자 이름
-    password: password                                                # 데이터베이스 비밀번호
+    password:                                                         # 데이터베이스 비밀번호 -> 없음
 
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect                # JPA에서 사용하는 데이터베이스 플랫폼 설정
@@ -55,3 +55,9 @@ logging:
       max-history: 30                                                   # 보관할 로그 파일의 최대 개수 (최대 30일치 로그 파일 보관)
       max-file-size: 10MB                                               # 각 로그 파일의 최대 크기 (10MB)
       total-size-cap: 100MB                                             # 로그 파일들의 총 크기 제한 (100MB)
+
+server:
+  error:
+    include-stacktrace: never
+    whitelabel:
+      enabled: false

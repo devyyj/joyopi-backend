@@ -3,7 +3,6 @@ package com.example.springbootboilerplate.common.security;
 import com.example.springbootboilerplate.common.exception.CustomException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -12,37 +11,33 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import javax.crypto.SecretKey;
-import java.util.Date;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Setter
 @Component
 public class JwtUtil {
-    @Value("${jwt.expiration}")
-    private Long expirationTime;
+    private final Long expirationTime;
 
     private final SecretKey key;
 
-    // 생성자에서 secretKey를 설정
-    public JwtUtil(@Value("${jwt.secret}") String secretKey) {
-        this.key = Keys.hmacShaKeyFor(Decoders.BASE64URL.decode(secretKey)); // Base64로 디코딩 후 SecretKey로 변환
+    public JwtUtil(@Value("${jwt.secret}") String secretKey
+            , @Value("${jwt.expiration}") Long expirationTime) {
+        this.expirationTime = expirationTime;
+        // Base64 URL 디코딩 방식으로 key 생성
+        this.key = Keys.hmacShaKeyFor(Decoders.BASE64URL.decode(secretKey));
     }
 
-    /**
-     * JWT 토큰을 생성합니다.
-     *
-     * @param username 사용자 이름 (혹은 사용자 ID)
-     * @return 생성된 JWT 토큰
-     */
-    String generateToken(String username) {
-        // 고정된 비밀키로 SecretKey 객체 생성
-
+    public String generateToken(String username, Map<String, Object> claims) {
         return Jwts.builder()
                 .subject(username)
+                .claims(claims)
                 .expiration(new Date(System.currentTimeMillis() + expirationTime))
                 .issuedAt(new Date())
                 .id(UUID.randomUUID().toString())
@@ -50,22 +45,33 @@ public class JwtUtil {
                 .compact();
     }
 
-    /**
-     * JWT 토큰이 유효한지 검증합니다.
-     *
-     * @param token 검증할 JWT 토큰
-     * @return 사용자 이름
-     */
-    String parseToken(String token) {
+    public String getUsername(String token) {
+        return getClaims(token).getSubject();
+    }
+
+    public Collection<? extends GrantedAuthority> getRoles(String token) {
+        // "roles" 클레임에서 권한 문자열 가져오기
+        String roles = getClaims(token).get("roles", String.class);
+
+        if (roles == null || roles.isEmpty()) {
+            return Collections.emptyList(); // 권한이 없으면 빈 리스트 반환
+        }
+
+        // 권한 문자열을 GrantedAuthority로 변환
+        return Arrays.stream(roles.split(",")) // ROLE_USER,ROLE_ADMIN 형식 분리
+                .map(SimpleGrantedAuthority::new) // 권한 문자열을 GrantedAuthority로 매핑
+                .collect(Collectors.toList());
+    }
+
+    private Claims getClaims(String token) {
         try {
-            Jws<Claims> claimsJws = Jwts.parser().verifyWith(key).build().parseSignedClaims(token);
-            return claimsJws.getPayload().getSubject();
+            return Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload();
         } catch (SignatureException e) {
             log.error(e.toString());
-            throw new CustomException(HttpStatus.INTERNAL_SERVER_ERROR, "JWT signature does not match");
+            throw new CustomException(HttpStatus.UNAUTHORIZED, "JWT signature does not match");
         } catch (ExpiredJwtException e) {
             log.error(e.toString());
-            throw new CustomException(HttpStatus.INTERNAL_SERVER_ERROR, "JWT expired");
+            throw new CustomException(HttpStatus.UNAUTHORIZED, "JWT expired");
         } catch (Exception e) {
             log.error(e.toString());
             throw new CustomException(HttpStatus.INTERNAL_SERVER_ERROR, "알 수 없는 예외");
