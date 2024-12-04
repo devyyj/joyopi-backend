@@ -33,7 +33,8 @@ spring:
 
 jwt:
   secret: VGhlIHF1aWNrIGJyb3duIGZveCBqdW1wcyBvdmVyIHRoZSBsYXp5IGRvZyB3aGlsZSBpdCBzaW5ncyBhIHR1bmUgdW5kZXIgdGhlIG1vb25saWdodCwgYW5kIG9jY2FzaW9uYWxseSBzdG9wcyB0byBlbmpveSBhIGhvdCBjdXAgb2YgY29mZmVlLg==
-  expiration: 3600000
+  accessTokenExpirationTime: 1800000  # 30분
+  refreshTokenExpirationTime: 604800000  # 7일
 
 logging:
   level:
