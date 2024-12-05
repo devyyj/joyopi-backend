@@ -1,4 +1,4 @@
-package com.example.springbootboilerplate.user;
+package com.example.springbootboilerplate.user.repository;
 
 import com.example.springbootboilerplate.common.entity.BaseEntity;
 import jakarta.persistence.*;
@@ -15,9 +15,9 @@ import java.time.LocalDateTime;
                 @UniqueConstraint(columnNames = {"oauthProvider", "oauthId"})
         }
 )
-public class User extends BaseEntity {
+public class UserEntity extends BaseEntity {
     private String oauthProvider;
     private String oauthId;
-    private String roles;
+    private String role;
     private LocalDateTime lastLogin;
 }

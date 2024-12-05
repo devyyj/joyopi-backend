@@ -1,4 +1,4 @@
-package com.example.springbootboilerplate.user;
+package com.example.springbootboilerplate.user.repository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -15,23 +15,23 @@ public class UserRepositoryImpl implements UserRepository {
     private final JpaUserRepository jpaRepository;
 
     @Override
-    public List<User> findAll() {
+    public List<UserEntity> findAll() {
         return jpaRepository.findAll();
     }
 
     @Override
-    public Optional<User> findById(Long id) {
+    public Optional<UserEntity> findById(Long id) {
         return jpaRepository.findById(id);
     }
 
     @Override
-    public Optional<User> findByOauthProviderAndOauthId(String oauthProvider, String oauthId) {
+    public Optional<UserEntity> findByOauthProviderAndOauthId(String oauthProvider, String oauthId) {
         return jpaRepository.findByOauthProviderAndOauthId(oauthProvider, oauthId);
     }
 
     @Override
-    public User save(User user) {
-        return jpaRepository.save(user);
+    public UserEntity save(UserEntity userEntity) {
+        return jpaRepository.save(userEntity);
     }
 
     @Override

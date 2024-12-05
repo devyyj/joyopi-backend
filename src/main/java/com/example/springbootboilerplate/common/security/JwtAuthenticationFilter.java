@@ -1,5 +1,6 @@
 package com.example.springbootboilerplate.common.security;
 
+import com.example.springbootboilerplate.common.util.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,10 +15,11 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.List;
 
 @Slf4j
-@RequiredArgsConstructor
 @Component
+@RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
@@ -33,15 +35,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (StringUtils.hasText(token)) {
             try {
                 // JWT에서 사용자 정보 추출
-                String username = jwtUtil.getUsername(token);
+                String userId = jwtUtil.getUserId(token);
 
-                if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                     // 사용자 인증 생성
                     UsernamePasswordAuthenticationToken authentication =
                             new UsernamePasswordAuthenticationToken(
-                                    username, // principal: username
-                                    null,    // credentials
-                                    jwtUtil.getRoles(token)); // 권한 설정 (예: ROLE_USER)
+                                    userId,
+                                    null,
+                                    List.of(jwtUtil.getRoles(token))); // 권한 설정 (예: ROLE_USER)
 
                     authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authentication);

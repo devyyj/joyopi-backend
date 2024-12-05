@@ -33,8 +33,10 @@ spring:
 
 jwt:
   secret: VGhlIHF1aWNrIGJyb3duIGZveCBqdW1wcyBvdmVyIHRoZSBsYXp5IGRvZyB3aGlsZSBpdCBzaW5ncyBhIHR1bmUgdW5kZXIgdGhlIG1vb25saWdodCwgYW5kIG9jY2FzaW9uYWxseSBzdG9wcyB0byBlbmpveSBhIGhvdCBjdXAgb2YgY29mZmVlLg==
-  accessTokenExpirationTime: 1800000  # 30분
-  refreshTokenExpirationTime: 604800000  # 7일
+  access-token-expiration-time: 1800000  # 30분
+  refresh-token-expiration-time: 604800000  # 7일
+  access-token-name: access_token
+  refresh-token-name: refresh_token
 
 logging:
   level:
