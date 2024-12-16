@@ -31,6 +31,7 @@ public class SecurityConfig {
 
         http://localhost:8080/h2-console
         http://localhost:8080/oauth2/authorization/kakao
+        http://localhost:8080/role-user
      */
 
     private final CustomOAuth2UserService userService;
@@ -45,7 +46,10 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable) // CSRF 비활성화
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+                .authorizeHttpRequests(auth ->
+                        auth.requestMatchers("/h2-console", "/login", "/oauth2/**").permitAll() // 허용할 경로
+                                .anyRequest().authenticated() // 나머지 경로는 인증 필요
+                )
                 .oauth2Login(oauth -> oauth
                         .userInfoEndpoint(userInfo -> userInfo
                                 .userService(userService))

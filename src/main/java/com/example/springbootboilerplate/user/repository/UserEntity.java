@@ -1,7 +1,9 @@
 package com.example.springbootboilerplate.user.repository;
 
 import com.example.springbootboilerplate.common.entity.BaseEntity;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

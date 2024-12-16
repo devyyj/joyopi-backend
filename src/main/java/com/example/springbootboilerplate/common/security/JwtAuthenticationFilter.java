@@ -33,23 +33,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = extractTokenFromHeader(request);
 
         if (StringUtils.hasText(token)) {
-            try {
-                // JWT에서 사용자 정보 추출
-                String userId = jwtUtil.getUserId(token);
+            // user id 가져오기
+            String userId = jwtUtil.getUserId(token);
+            if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                // 사용자 인증 생성
+                UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(
+                                userId
+                                , null
+                                , List.of(jwtUtil.getRoles(token)));
 
-                if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                    // 사용자 인증 생성
-                    UsernamePasswordAuthenticationToken authentication =
-                            new UsernamePasswordAuthenticationToken(
-                                    userId,
-                                    null,
-                                    List.of(jwtUtil.getRoles(token))); // 권한 설정 (예: ROLE_USER)
-
-                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
-                }
-            } catch (Exception e) {
-                log.error("JWT 검증 실패: {}", e.getMessage());
+                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         }
 

@@ -36,7 +36,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         Map<String, Object> attributes = new HashMap<>(oAuth2User.getAttributes());
         attributes.put("userId", String.valueOf(user.getId()));
 
-        // ClientRegistration에서 user-name-attribute 가져오기
+        // user-name-attribute 가져오기
         String nameAttributeKey = userRequest.getClientRegistration()
                 .getProviderDetails()
                 .getUserInfoEndpoint()

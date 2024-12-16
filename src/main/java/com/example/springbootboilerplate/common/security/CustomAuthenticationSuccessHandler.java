@@ -26,26 +26,24 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
-
+        // 권한 가져오기
         String role = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
-                        .findFirst().orElse(null);
-
+                .findFirst().orElse(null);
+        // user id 가져오기
         String userId = oAuth2User.getAttribute("userId");
-
+        // 토큰 발급
         String accessToken = jwtUtil.generateAccessToken(userId, role);
         String refreshToken = jwtUtil.generateRefreshToken(userId);
-
+        // 액세스 토큰 본문에 설정
         Map<String, String> responseBody = new HashMap<>();
         responseBody.put(jwtUtil.getAccessTokenName(), accessToken);
-        // 쿠키 생성
+        // 리프레시 토큰 쿠키에 설정
         Cookie refreshTokenCookie = getRefreshTokenCookie(refreshToken);
-        // 쿠키를 클라이언트의 응답에 추가
         response.addCookie(refreshTokenCookie);
-
+        // JSON 응답 전송
         response.setContentType("application/json");
         response.setStatus(HttpServletResponse.SC_OK);
-        // JSON 응답 전송
         response.getWriter().write(objectMapper.writeValueAsString(responseBody));
     }
 
@@ -53,11 +51,9 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         Cookie cookie = new Cookie(jwtUtil.getRefreshTokenName(), refreshToken);
         cookie.setPath("/");
         // 쿠키의 만료 시간 설정 (refreshTokenExpirationTime과 같게 설정)
-        cookie.setMaxAge( jwtUtil.getRefreshTokenExpirationTime().intValue() / 1000);
-        // 쿠키가 HTTP 요청에서만 사용되도록 설정 (JavaScript에서 접근 불가)
+        cookie.setMaxAge(jwtUtil.getRefreshTokenExpirationTime().intValue() / 1000);
         cookie.setHttpOnly(true);
-        // 쿠키가 동일 사이트에서만 유효하도록 설정
-        // "SameSite" 속성 수동으로 추가
+        // 쿠키가 동일 사이트에서만 유효하도록 설정, "SameSite" 속성 수동으로 추가
         cookie.setAttribute("SameSite", "Strict");  // 또는 "Lax"
         // 쿠키가 HTTPS에서만 전송되도록 설정 (보안)
 //        cookie.setSecure(true);  // HTTPS 연결일 때만 사용

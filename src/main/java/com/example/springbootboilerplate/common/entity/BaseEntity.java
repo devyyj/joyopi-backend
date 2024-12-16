@@ -1,19 +1,15 @@
 package com.example.springbootboilerplate.common.entity;
 
 import jakarta.persistence.*;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
+@Data
 @MappedSuperclass
-@Getter
-@Setter
-@EqualsAndHashCode
-@ToString
+@NoArgsConstructor
 public class BaseEntity {
 
     @Id
