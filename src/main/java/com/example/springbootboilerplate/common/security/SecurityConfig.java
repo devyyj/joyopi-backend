@@ -3,8 +3,7 @@ package com.example.springbootboilerplate.common.security;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.client.reactive.ReactorClientHttpConnector;
-import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -12,14 +11,12 @@ import org.springframework.security.config.annotation.web.configurers.HeadersCon
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.netty.http.client.HttpClient;
-import reactor.netty.transport.ProxyProvider;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
+@EnableMethodSecurity
 public class SecurityConfig {
 
     /*
@@ -29,6 +26,7 @@ public class SecurityConfig {
         -Dhttps.proxyHost=172.29.254.15
         -Dhttps.proxyPort=3128
 
+        http://localhost:8080/
         http://localhost:8080/h2-console
         http://localhost:8080/oauth2/authorization/kakao
         http://localhost:8080/role-user
@@ -37,6 +35,7 @@ public class SecurityConfig {
     private final CustomOAuth2UserService userService;
     private final CustomAuthenticationSuccessHandler successHandler;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final CustomAuthenticationEntryPoint authenticationEntryPoint;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -44,11 +43,20 @@ public class SecurityConfig {
                 .headers(headers -> headers
                         .frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
                 .csrf(AbstractHttpConfigurer::disable) // CSRF 비활성화
+                .requestCache(cache -> cache
+                        .requestCache(new HttpSessionRequestCache() {{
+                            setCreateSessionAllowed(false);
+                        }}))
+                .formLogin(AbstractHttpConfigurer::disable)
+                .httpBasic(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth ->
-                        auth.requestMatchers("/h2-console", "/login", "/oauth2/**").permitAll() // 허용할 경로
+                        auth.requestMatchers("/h2-console/**", "/login", "/oauth2/**").permitAll() // 허용할 경로
                                 .anyRequest().authenticated() // 나머지 경로는 인증 필요
+                )
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(authenticationEntryPoint) // 401 반환
                 )
                 .oauth2Login(oauth -> oauth
                         .userInfoEndpoint(userInfo -> userInfo
@@ -56,8 +64,6 @@ public class SecurityConfig {
                         .successHandler(successHandler) // defaultSuccessUrl() 를 적용하면 successHandler()가 호출되지 않는 다는 사실!
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // JWT 필터 추가
-        ;
-
         return http.build();
     }
 }

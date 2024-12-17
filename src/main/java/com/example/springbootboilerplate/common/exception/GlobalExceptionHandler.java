@@ -3,9 +3,9 @@ package com.example.springbootboilerplate.common.exception;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @Slf4j
@@ -20,6 +20,15 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, ex.getHttpStatus());
     }
 
+    // 권한이 없는 경우
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    public ResponseEntity<ErrorResponseDto> handleAuthorizationDeniedException(AuthorizationDeniedException ex) {
+        log.error(ex.toString());
+        ErrorResponseDto errorResponse = new ErrorResponseDto(HttpStatus.FORBIDDEN.value(), ex.getMessage(), null);
+        return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
+    }
+
+    // 존재하지 않는 경로 접근
     @ExceptionHandler(NoResourceFoundException.class)
     public ResponseEntity<ErrorResponseDto> handleNoResourceFoundException(NoResourceFoundException ex) {
         log.error(ex.toString());
