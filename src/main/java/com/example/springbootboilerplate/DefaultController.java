@@ -24,22 +24,14 @@ public class DefaultController {
     }
 
     @PreAuthorize("hasRole('USER')")
-    @GetMapping("/role-user")
-    public String roleUserOnly() {
+    @GetMapping("/user")
+    public String user() {
         return "you have a user role";
     }
 
-    @GetMapping("/role-admin")
+    @GetMapping("/admin")
     @PreAuthorize("hasRole('ADMIN')")
-    public String roleAdminOnly(Authentication authentication) {
-        if (authentication != null) {
-            // 사용자의 권한 확인
-            for (GrantedAuthority authority : authentication.getAuthorities()) {
-                if ("ROLE_ADMIN".equals(authority.getAuthority())) {
-                    return "Admin 권한 있음";
-                }
-            }
-        }
+    public String admin() {
         return "you have a admin role";
     }
 }

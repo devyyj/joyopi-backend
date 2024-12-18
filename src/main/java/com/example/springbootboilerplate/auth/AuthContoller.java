@@ -35,7 +35,7 @@ public class AuthContoller {
             }
         }
         // 쿠키에 리프레시 토큰 없을 경우
-        AuthResponseDto responseDto = new AuthResponseDto("");
+        AuthResponseDto responseDto = new AuthResponseDto(null);
         return new ResponseEntity<>(responseDto, HttpStatus.BAD_REQUEST);
     }
 

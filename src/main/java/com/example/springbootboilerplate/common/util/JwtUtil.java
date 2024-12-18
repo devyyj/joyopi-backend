@@ -1,10 +1,7 @@
 package com.example.springbootboilerplate.common.util;
 
 import com.example.springbootboilerplate.common.exception.CustomException;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
@@ -84,9 +81,13 @@ public class JwtUtil {
         } catch (ExpiredJwtException e) {
             log.error(e.toString());
             throw new CustomException(HttpStatus.UNAUTHORIZED, "JWT expired");
-        } catch (Exception e) {
+        } catch (MalformedJwtException e) {
             log.error(e.toString());
-            throw new CustomException(HttpStatus.INTERNAL_SERVER_ERROR, "알 수 없는 예외");
+            throw new CustomException(HttpStatus.UNAUTHORIZED, "Invalid compact JWT string");
+        }
+        catch (Exception e) {
+            log.error(e.toString());
+            throw new CustomException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error");
         }
     }
 }

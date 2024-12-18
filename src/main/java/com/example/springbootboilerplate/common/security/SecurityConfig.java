@@ -3,6 +3,7 @@ package com.example.springbootboilerplate.common.security;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -11,7 +12,6 @@ import org.springframework.security.config.annotation.web.configurers.HeadersCon
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 
 @Configuration
 @EnableWebSecurity
@@ -32,10 +32,10 @@ public class SecurityConfig {
         http://localhost:8080/role-user
      */
 
-    private final CustomOAuth2UserService userService;
-    private final CustomAuthenticationSuccessHandler successHandler;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final CustomOAuth2UserService userService;
     private final CustomAuthenticationEntryPoint authenticationEntryPoint;
+    private final CustomAuthenticationSuccessHandler successHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -43,26 +43,23 @@ public class SecurityConfig {
                 .headers(headers -> headers
                         .frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
                 .csrf(AbstractHttpConfigurer::disable) // CSRF 비활성화
-                .requestCache(cache -> cache
-                        .requestCache(new HttpSessionRequestCache() {{
-                            setCreateSessionAllowed(false);
-                        }}))
-                .formLogin(AbstractHttpConfigurer::disable)
-                .httpBasic(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth ->
-                        auth.requestMatchers("/h2-console/**", "/login", "/oauth2/**").permitAll() // 허용할 경로
-                                .anyRequest().authenticated() // 나머지 경로는 인증 필요
-                )
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션을 사용하지 않음
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(
+                                "/h2-console/**"
+                                , "/"
+                                , "/auth/**"
+                                , "/oauth2/**"
+                        ).permitAll() // 허용할 경로
+                        .anyRequest().authenticated()) // 나머지 경로는 인증 필요
                 .exceptionHandling(exception -> exception
-                        .authenticationEntryPoint(authenticationEntryPoint) // 401 반환
-                )
+                        .authenticationEntryPoint(authenticationEntryPoint)) // 401 반환, 이거 설정하면 기본 /login 페이지 동작하지 않음
                 .oauth2Login(oauth -> oauth
                         .userInfoEndpoint(userInfo -> userInfo
                                 .userService(userService))
-                        .successHandler(successHandler) // defaultSuccessUrl() 를 적용하면 successHandler()가 호출되지 않는 다는 사실!
-                )
+                        .successHandler(successHandler)) // defaultSuccessUrl() 를 적용하면 successHandler()가 호출되지 않는 다는 사실!
+                .logout(AbstractHttpConfigurer::disable) // /logout 기능 비활성화
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // JWT 필터 추가
         return http.build();
     }

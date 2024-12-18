@@ -1,5 +1,6 @@
 package com.example.springbootboilerplate.common.security;
 
+import com.example.springbootboilerplate.common.exception.CustomException;
 import com.example.springbootboilerplate.common.util.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -30,25 +31,33 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain) throws ServletException, IOException {
 
-        String token = extractTokenFromHeader(request);
+        try {
+            String token = extractTokenFromHeader(request);
 
-        if (StringUtils.hasText(token)) {
-            // user id 가져오기
-            String userId = jwtUtil.getUserId(token);
-            if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                // 사용자 인증 생성
-                UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(
-                                userId
-                                , null
-                                , List.of(jwtUtil.getRoles(token)));
+            if (StringUtils.hasText(token)) {
+                // user id 가져오기
+                String userId = jwtUtil.getUserId(token);
+                if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                    // 사용자 인증 생성
+                    UsernamePasswordAuthenticationToken authentication =
+                            new UsernamePasswordAuthenticationToken(
+                                    userId
+                                    , null
+                                    , List.of(jwtUtil.getRoles(token)));
 
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                }
             }
-        }
 
-        filterChain.doFilter(request, response);
+            filterChain.doFilter(request, response);
+        } catch (CustomException e) { // 여기서 예외 처리하지 않으면 exceptionHandling 으로 넘어감, 넘어가면 정확한 예외를 확인할 수 없음
+            log.error(e.getMessage());
+            response.setStatus(e.getHttpStatus().value());
+            response.getWriter().write(e.getMessage());
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
     }
 
     private String extractTokenFromHeader(HttpServletRequest request) {
