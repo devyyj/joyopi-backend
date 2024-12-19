@@ -1,4 +1,4 @@
-package com.example.springbootboilerplate.auth;
+package com.example.springbootboilerplate.auth.service;
 
 import com.example.springbootboilerplate.common.util.JwtUtil;
 import com.example.springbootboilerplate.user.domain.User;

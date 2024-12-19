@@ -1,4 +1,4 @@
-package com.example.springbootboilerplate.auth;
+package com.example.springbootboilerplate.auth.dto;
 
 public record AuthResponseDto(String access_token) {
 }

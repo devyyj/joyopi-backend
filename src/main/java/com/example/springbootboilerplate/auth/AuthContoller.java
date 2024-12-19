@@ -1,11 +1,14 @@
 package com.example.springbootboilerplate.auth;
 
+import com.example.springbootboilerplate.auth.dto.AuthResponseDto;
+import com.example.springbootboilerplate.auth.service.AuthService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -37,6 +40,11 @@ public class AuthContoller {
         // 쿠키에 리프레시 토큰 없을 경우
         AuthResponseDto responseDto = new AuthResponseDto(null);
         return new ResponseEntity<>(responseDto, HttpStatus.BAD_REQUEST);
+    }
+
+    @PostMapping("/logout")
+    public void logout(HttpServletRequest request, @AuthenticationPrincipal String userId) {
+        System.out.println(userId);
     }
 
 }
