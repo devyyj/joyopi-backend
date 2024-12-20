@@ -35,16 +35,16 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         // 토큰 발급
         String accessToken = jwtUtil.generateAccessToken(userId, role);
         String refreshToken = jwtUtil.generateRefreshToken(userId);
-        // 액세스 토큰 본문에 설정
-        Map<String, String> responseBody = new HashMap<>();
-        responseBody.put(jwtUtil.getAccessTokenName(), accessToken);
+        // 액세스 토큰 헤더에 설정
+        response.setHeader("Authorization", "Bearer " + accessToken);
         // 리프레시 토큰 쿠키에 설정
         Cookie refreshTokenCookie = getRefreshTokenCookie(refreshToken);
         response.addCookie(refreshTokenCookie);
         // JSON 응답 전송
         response.setContentType("application/json");
         response.setStatus(HttpServletResponse.SC_OK);
-        response.getWriter().write(objectMapper.writeValueAsString(responseBody));
+        // 메인화면으로 리다이렉트
+        response.sendRedirect("http://localhost:5173/");
     }
 
     private Cookie getRefreshTokenCookie(String refreshToken) {

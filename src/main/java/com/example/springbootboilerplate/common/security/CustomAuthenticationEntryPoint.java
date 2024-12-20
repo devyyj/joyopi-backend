@@ -14,7 +14,6 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         // 인증되지 않은 사용자에 대해 401 Unauthorized 응답을 보냄
-        System.out.println(authException.getMessage());
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.getWriter().write("Unauthorized: You need to log in to access this resource");
     }

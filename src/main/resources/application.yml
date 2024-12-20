@@ -31,6 +31,11 @@ spring:
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user-name-attribute: id
 
+kakao:
+  logout-uri: https://kauth.kakao.com/oauth/logout
+  logout-redirect-uri: http://localhost:8080/auth/logout
+
+
 jwt:
   secret: VGhlIHF1aWNrIGJyb3duIGZveCBqdW1wcyBvdmVyIHRoZSBsYXp5IGRvZyB3aGlsZSBpdCBzaW5ncyBhIHR1bmUgdW5kZXIgdGhlIG1vb25saWdodCwgYW5kIG9jY2FzaW9uYWxseSBzdG9wcyB0byBlbmpveSBhIGhvdCBjdXAgb2YgY29mZmVlLg==
   access-token-expiration-time: 1800000  # 30분

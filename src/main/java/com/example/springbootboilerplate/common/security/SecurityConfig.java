@@ -12,6 +12,11 @@ import org.springframework.security.config.annotation.web.configurers.HeadersCon
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
@@ -36,6 +41,7 @@ public class SecurityConfig {
     private final CustomOAuth2UserService userService;
     private final CustomAuthenticationEntryPoint authenticationEntryPoint;
     private final CustomAuthenticationSuccessHandler successHandler;
+    private final CustomLogoutHandler logoutHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -43,6 +49,7 @@ public class SecurityConfig {
                 .headers(headers -> headers
                         .frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
                 .csrf(AbstractHttpConfigurer::disable) // CSRF 비활성화
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션을 사용하지 않음
                 .authorizeHttpRequests(auth -> auth
@@ -59,8 +66,25 @@ public class SecurityConfig {
                         .userInfoEndpoint(userInfo -> userInfo
                                 .userService(userService))
                         .successHandler(successHandler)) // defaultSuccessUrl() 를 적용하면 successHandler()가 호출되지 않는 다는 사실!
-                .logout(AbstractHttpConfigurer::disable) // /logout 기능 비활성화
+                .logout(logout -> logout
+                        .logoutUrl("/logout") // 로그아웃 엔드포인트 설정
+                        .addLogoutHandler(logoutHandler)) // 커스텀 핸들러 추가
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // JWT 필터 추가
         return http.build();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173")); // 클라이언트의 허용된 도메인 (예: React 앱의 주소)
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE")); // 허용할 HTTP 메서드
+        configuration.setAllowedHeaders(Arrays.asList("*")); // 모든 헤더 허용
+        configuration.setAllowCredentials(true); // 쿠키를 포함한 요청 허용
+        configuration.setMaxAge(3600L); // 캐시 기간 (1시간)
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration); // 모든 경로에 대해 CORS 설정
+
+        return source;
     }
 }
