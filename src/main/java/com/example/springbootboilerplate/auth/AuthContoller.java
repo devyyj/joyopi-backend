@@ -21,9 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AuthContoller {
 
-    @Value("${jwt.refresh-token-name}")
-    private String refreshTokenName;
-
     private final AuthService authService;
     private final JwtUtil jwtUtil;
 
@@ -32,7 +29,7 @@ public class AuthContoller {
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
-                if (refreshTokenName.equals(cookie.getName())) {
+                if (jwtUtil.getRefreshTokenName().equals(cookie.getName())) {
                     String refreshToken = cookie.getValue();
                     // 리프레시 토큰을 사용하여 액세스 토큰 재발급 처리
                     String accessToken = authService.reissueAccessToken(refreshToken);

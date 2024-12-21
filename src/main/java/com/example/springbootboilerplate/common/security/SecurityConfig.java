@@ -42,6 +42,7 @@ public class SecurityConfig {
     private final CustomAuthenticationEntryPoint authenticationEntryPoint;
     private final CustomAuthenticationSuccessHandler successHandler;
     private final CustomLogoutHandler logoutHandler;
+    private final CustomLogoutSuccessHandler logoutSuccessHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -68,7 +69,7 @@ public class SecurityConfig {
                         .successHandler(successHandler)) // defaultSuccessUrl() 를 적용하면 successHandler()가 호출되지 않는 다는 사실!
                 .logout(logout -> logout
                         .logoutUrl("/logout") // 로그아웃 엔드포인트 설정
-                        .addLogoutHandler(logoutHandler)) // 커스텀 핸들러 추가
+                        .addLogoutHandler(logoutHandler))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // JWT 필터 추가
         return http.build();
     }

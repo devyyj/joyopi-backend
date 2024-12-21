@@ -16,8 +16,6 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class CustomLogoutHandler implements LogoutHandler {
 
-    private final JwtUtil jwtUtil;
-
     @Value("${kakao.logout-uri}")
     private String KAKAO_LOGOUT_URL;
     @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
@@ -30,22 +28,12 @@ public class CustomLogoutHandler implements LogoutHandler {
 
         String kakaoLogoutUrl = KAKAO_LOGOUT_URL
                 + "?client_id=" + REST_API_KEY
-                + "&logout_redirect_uri=" + LOGOUT_REDIRECT_URI;
+                + "&logout_redirect_uri=" + LOGOUT_REDIRECT_URI + "?logout";
 
         try {
             response.sendRedirect(kakaoLogoutUrl);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-//
-//        // 세션 무효화
-//        if (authentication != null) {
-//            request.getSession().invalidate();
-//        }
-//
-//        // 리프레시 토큰 쿠키 삭제
-//        Cookie refreshTokenCookie = new Cookie(jwtUtil.getRefreshTokenName(), null);
-//        refreshTokenCookie.setPath("/"); // 적용 경로 설정
-//        refreshTokenCookie.setMaxAge(0); // 쿠키 삭제를 위해 만료 시간 0으로 설정
     }
 }

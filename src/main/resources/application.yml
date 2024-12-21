@@ -23,6 +23,7 @@ spring:
           kakao:
             client-id: 2be6c80ecf9fed1e9b15ac05d13a2bc4      # 카카오 개발자 사이트에서 발급받은 클라이언트 ID
             redirect-uri: http://localhost:8080/login/oauth2/code/kakao  # 리다이렉트 URI
+#            redirect-uri: http://localhost:8080/  # 리다이렉트 URI
             authorization-grant-type: authorization_code
         provider:
           kakao:
@@ -31,10 +32,12 @@ spring:
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user-name-attribute: id
 
+front-end:
+  host: http://localhost:5173
+
 kakao:
   logout-uri: https://kauth.kakao.com/oauth/logout
-  logout-redirect-uri: http://localhost:8080/auth/logout
-
+  logout-redirect-uri: http://localhost:5173/login
 
 jwt:
   secret: VGhlIHF1aWNrIGJyb3duIGZveCBqdW1wcyBvdmVyIHRoZSBsYXp5IGRvZyB3aGlsZSBpdCBzaW5ncyBhIHR1bmUgdW5kZXIgdGhlIG1vb25saWdodCwgYW5kIG9jY2FzaW9uYWxseSBzdG9wcyB0byBlbmpveSBhIGhvdCBjdXAgb2YgY29mZmVlLg==

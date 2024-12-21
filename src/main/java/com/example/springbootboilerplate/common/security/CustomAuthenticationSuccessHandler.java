@@ -6,6 +6,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -13,6 +14,8 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,7 +24,9 @@ import java.util.Map;
 public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
     private final JwtUtil jwtUtil;
-    private final ObjectMapper objectMapper = new ObjectMapper(); // JSON 변환용
+
+    @Value("${front-end.host}")
+    private String frontEndHost;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
@@ -35,16 +40,18 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         // 토큰 발급
         String accessToken = jwtUtil.generateAccessToken(userId, role);
         String refreshToken = jwtUtil.generateRefreshToken(userId);
-        // 액세스 토큰 헤더에 설정
-        response.setHeader("Authorization", "Bearer " + accessToken);
         // 리프레시 토큰 쿠키에 설정
         Cookie refreshTokenCookie = getRefreshTokenCookie(refreshToken);
         response.addCookie(refreshTokenCookie);
-        // JSON 응답 전송
-        response.setContentType("application/json");
-        response.setStatus(HttpServletResponse.SC_OK);
-        // 메인화면으로 리다이렉트
-        response.sendRedirect("http://localhost:5173/");
+        // 리다이렉트 URL 구성
+        String redirectUrl = constructRedirectUrl(frontEndHost, accessToken);
+        // 리다이렉트 수행
+        response.sendRedirect(redirectUrl);
+    }
+
+    private String constructRedirectUrl(String baseRedirectUrl, String accessToken) {
+        String encodedAccessToken = URLEncoder.encode(accessToken, StandardCharsets.UTF_8);
+        return baseRedirectUrl + "/login" + "?access_token=" + encodedAccessToken;
     }
 
     private Cookie getRefreshTokenCookie(String refreshToken) {
