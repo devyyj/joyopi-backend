@@ -42,7 +42,6 @@ public class SecurityConfig {
     private final CustomAuthenticationEntryPoint authenticationEntryPoint;
     private final CustomAuthenticationSuccessHandler successHandler;
     private final CustomLogoutHandler logoutHandler;
-    private final CustomLogoutSuccessHandler logoutSuccessHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
