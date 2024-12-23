@@ -24,13 +24,15 @@ public class AuthContoller {
     @GetMapping("/reissue-token")
     public ResponseEntity<AuthResponseDto> reissueToken(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
-        for (Cookie cookie : cookies) {
-            if (jwtUtil.getRefreshTokenName().equals(cookie.getName())) {
-                String refreshToken = cookie.getValue();
-                // 리프레시 토큰을 사용하여 액세스 토큰 재발급 처리
-                String accessToken = authService.reissueAccessToken(refreshToken);
-                AuthResponseDto responseDto = new AuthResponseDto(accessToken);
-                return new ResponseEntity<>(responseDto, HttpStatus.OK);
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (jwtUtil.getRefreshTokenName().equals(cookie.getName())) {
+                    String refreshToken = cookie.getValue();
+                    // 리프레시 토큰을 사용하여 액세스 토큰 재발급 처리
+                    String accessToken = authService.reissueAccessToken(refreshToken);
+                    AuthResponseDto responseDto = new AuthResponseDto(accessToken);
+                    return new ResponseEntity<>(responseDto, HttpStatus.OK);
+                }
             }
         }
         throw new CustomException(HttpStatus.BAD_REQUEST, "Refresh token is missing.");

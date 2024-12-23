@@ -58,7 +58,8 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         Cookie cookie = new Cookie(jwtUtil.getRefreshTokenName(), refreshToken);
         cookie.setPath("/");
         // 쿠키의 만료 시간 설정 (refreshTokenExpirationTime과 같게 설정)
-        cookie.setMaxAge(jwtUtil.getRefreshTokenExpirationTime().intValue() / 1000);
+//        cookie.setMaxAge(jwtUtil.getRefreshTokenExpirationTime().intValue() / 1000);
+        cookie.setMaxAge(-1);
         cookie.setHttpOnly(true);
         // 쿠키가 동일 사이트에서만 유효하도록 설정, "SameSite" 속성 수동으로 추가
         cookie.setAttribute("SameSite", "Strict");  // 또는 "Lax"

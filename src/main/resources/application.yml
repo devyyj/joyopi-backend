@@ -23,7 +23,6 @@ spring:
           kakao:
             client-id: 2be6c80ecf9fed1e9b15ac05d13a2bc4      # 카카오 개발자 사이트에서 발급받은 클라이언트 ID
             redirect-uri: http://localhost:8080/login/oauth2/code/kakao  # 리다이렉트 URI
-#            redirect-uri: http://localhost:8080/  # 리다이렉트 URI
             authorization-grant-type: authorization_code
         provider:
           kakao:
