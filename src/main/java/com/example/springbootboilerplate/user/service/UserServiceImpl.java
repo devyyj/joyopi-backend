@@ -1,6 +1,7 @@
 package com.example.springbootboilerplate.user.service;
 
 import com.example.springbootboilerplate.common.exception.CustomException;
+import com.example.springbootboilerplate.oauth.OAuthService;
 import com.example.springbootboilerplate.user.domain.User;
 import com.example.springbootboilerplate.user.repository.UserEntity;
 import com.example.springbootboilerplate.user.repository.UserRepository;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -18,6 +20,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final OAuthService oAuthService;
 
     @Override
     public User createUser(User user) {
@@ -50,6 +53,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteUser(Long id) {
+        UserEntity userEntity = userRepository.findById(id).orElseThrow();
+        oAuthService.unlink(userEntity.getOauthId(), userEntity.getOauthProvider());
         userRepository.deleteById(id);
     }
 

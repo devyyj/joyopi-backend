@@ -1,7 +1,6 @@
 package com.example.springbootboilerplate.common.security;
 
 import com.example.springbootboilerplate.common.util.JwtUtil;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -16,8 +15,6 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
@@ -25,7 +22,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
     private final JwtUtil jwtUtil;
 
-    @Value("${front-end.host}")
+    @Value("${common.front-end.host}")
     private String frontEndHost;
 
     @Override

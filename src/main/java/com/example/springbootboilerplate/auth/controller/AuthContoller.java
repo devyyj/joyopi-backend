@@ -1,4 +1,4 @@
-package com.example.springbootboilerplate.auth;
+package com.example.springbootboilerplate.auth.controller;
 
 import com.example.springbootboilerplate.auth.dto.AuthResponseDto;
 import com.example.springbootboilerplate.auth.service.AuthService;

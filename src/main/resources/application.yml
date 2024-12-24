@@ -31,11 +31,18 @@ spring:
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user-name-attribute: id
 
-front-end:
-  host: http://localhost:5173
+common:
+  front-end:
+    host: http://localhost:5173
+  proxy:
+    enabled: true
+    host: 172.29.254.15
+    port : 3128
 
 kakao:
+  admin-key: f8e350c517e15a418269d3a77a541682
   logout-uri: https://kauth.kakao.com/oauth/logout
+  unlink-uri: https://kapi.kakao.com/v1/user/unlink
 
 jwt:
   secret: VGhlIHF1aWNrIGJyb3duIGZveCBqdW1wcyBvdmVyIHRoZSBsYXp5IGRvZyB3aGlsZSBpdCBzaW5ncyBhIHR1bmUgdW5kZXIgdGhlIG1vb25saWdodCwgYW5kIG9jY2FzaW9uYWxseSBzdG9wcyB0byBlbmpveSBhIGhvdCBjdXAgb2YgY29mZmVlLg==
@@ -49,6 +56,7 @@ logging:
     root: INFO                                                         # 루트 로거의 기본 레벨을 INFO로 설정 (애플리케이션 전체 로깅 레벨)
     com.example.springbootboilerplate: DEBUG                           # 특정 패키지의 로그는 DEBUG 레벨로 설정
     org.springframework.security: DEBUG
+    org.springframework.web.client: DEBUG
 
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} - %5p [%t] %logger{36} - %msg%n"  # 콘솔에 출력되는 로그 메시지 형식

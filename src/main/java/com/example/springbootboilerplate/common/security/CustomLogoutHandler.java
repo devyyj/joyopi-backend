@@ -18,7 +18,7 @@ public class CustomLogoutHandler implements LogoutHandler {
     private String kakaoLogoutUrl;
     @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
     private String clientId; // 카카오 REST API 키
-    @Value("${front-end.host}")
+    @Value("${common.front-end.host}")
     private String frontEndHost; // 로그아웃 후 리다이렉트 URI
 
     @Override
