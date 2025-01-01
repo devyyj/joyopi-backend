@@ -2,6 +2,7 @@ package com.example.springbootboilerplate.common.security;
 
 import com.example.springbootboilerplate.common.exception.CustomException;
 import com.example.springbootboilerplate.common.util.JwtUtil;
+import com.example.springbootboilerplate.common.util.ResponseUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -53,8 +54,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         } catch (CustomException e) { // 여기서 예외 처리하지 않으면 exceptionHandling 으로 넘어감, 넘어가면 정확한 예외를 확인할 수 없음
             log.error(e.getMessage());
-            response.setStatus(e.getHttpStatus().value());
-            response.getWriter().write(e.getMessage());
+            ResponseUtil.writeJsonResponse(response, e.getHttpStatus().value(), e.getMessage());
         } catch (Exception e) {
             log.error(e.getMessage());
         }

@@ -1,5 +1,6 @@
 package com.example.springbootboilerplate.common.exception;
 
+import com.example.springbootboilerplate.common.dto.ApiResponseDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,33 +15,33 @@ public class GlobalExceptionHandler {
 
     // 커스텀 예외 처리
     @ExceptionHandler(CustomException.class)
-    public ResponseEntity<ErrorResponseDto> handleCustomException(CustomException ex) {
+    public ResponseEntity<ApiResponseDto<String>> handleCustomException(CustomException ex) {
         log.error(ex.toString());
-        ErrorResponseDto errorResponse = new ErrorResponseDto(ex.getHttpStatus().value(), ex.getMessage(), ex.getDetail());
-        return new ResponseEntity<>(errorResponse, ex.getHttpStatus());
+        ApiResponseDto<String> responseDto = new ApiResponseDto<>(ex.getMessage(), ex.getDetail());
+        return new ResponseEntity<>(responseDto, ex.getHttpStatus());
     }
 
     // 권한이 없는 경우
     @ExceptionHandler(AuthorizationDeniedException.class)
-    public ResponseEntity<ErrorResponseDto> handleAuthorizationDeniedException(AuthorizationDeniedException ex) {
+    public ResponseEntity<ApiResponseDto<Void>> handleAuthorizationDeniedException(AuthorizationDeniedException ex) {
         log.error(ex.toString());
-        ErrorResponseDto errorResponse = new ErrorResponseDto(HttpStatus.FORBIDDEN.value(), ex.getMessage(), null);
-        return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
+        ApiResponseDto<Void> responseDto = new ApiResponseDto<>(ex.getMessage(), null);
+        return new ResponseEntity<>(responseDto, HttpStatus.FORBIDDEN);
     }
 
     // 존재하지 않는 경로 접근
     @ExceptionHandler(NoResourceFoundException.class)
-    public ResponseEntity<ErrorResponseDto> handleNoResourceFoundException(NoResourceFoundException ex) {
+    public ResponseEntity<ApiResponseDto<Void>> handleNoResourceFoundException(NoResourceFoundException ex) {
         log.error(ex.toString());
-        ErrorResponseDto errorResponse = new ErrorResponseDto(HttpStatus.NOT_FOUND.value(), ex.getMessage(), null);
-        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+        ApiResponseDto<Void> responseDto = new ApiResponseDto<Void>(ex.getMessage(), null);
+        return new ResponseEntity<>(responseDto, HttpStatus.NOT_FOUND);
     }
 
     // 모든 예외 처리 (기타 모든 예외를 처리)
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponseDto> handleAllExceptions(Exception ex) {
+    public ResponseEntity<ApiResponseDto<Void>> handleAllExceptions(Exception ex) {
         log.error(ex.toString());
-        ErrorResponseDto errorResponse = new ErrorResponseDto(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage(), null);
-        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+        ApiResponseDto<Void> responseDto = new ApiResponseDto<Void>(ex.getMessage(), null);
+        return new ResponseEntity<>(responseDto, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
