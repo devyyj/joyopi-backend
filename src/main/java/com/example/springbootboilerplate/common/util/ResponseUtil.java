@@ -1,7 +1,8 @@
 package com.example.springbootboilerplate.common.util;
 
-import com.example.springbootboilerplate.common.dto.ApiResponseDto;
+import com.example.springbootboilerplate.common.dto.ExceptionResponseDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
@@ -24,9 +25,23 @@ public class ResponseUtil {
         response.setCharacterEncoding("UTF-8");
 
         // ApiResponseDto 생성
-        ApiResponseDto<Void> apiResponse = new ApiResponseDto<>(message, null);
+        ExceptionResponseDto<Void> apiResponse = new ExceptionResponseDto<>(message, null);
 
         // JSON으로 변환 후 응답에 작성
         response.getWriter().write(objectMapper.writeValueAsString(apiResponse));
+    }
+
+    /**
+     * 지정된 이름의 쿠키를 삭제하는 유틸리티 메서드
+     *
+     * @param response   HttpServletResponse 객체
+     * @param cookieName 삭제할 쿠키의 이름
+     */
+    public static void deleteCookie(HttpServletResponse response, String cookieName) {
+        Cookie cookie = new Cookie(cookieName, null); // 지정된 이름의 쿠키 삭제
+        cookie.setPath("/"); // 애플리케이션의 루트 경로에 적용
+        cookie.setMaxAge(0); // 만료 시간을 0으로 설정하여 쿠키 삭제
+        cookie.setHttpOnly(true); // 보안 설정
+        response.addCookie(cookie); // 응답에 추가하여 클라이언트에서 삭제
     }
 }

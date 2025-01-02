@@ -4,6 +4,7 @@ import com.example.springbootboilerplate.auth.dto.AuthResponseDto;
 import com.example.springbootboilerplate.auth.service.AuthService;
 import com.example.springbootboilerplate.common.exception.CustomException;
 import com.example.springbootboilerplate.common.util.JwtUtil;
+import com.example.springbootboilerplate.common.util.ResponseUtil;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -39,12 +40,7 @@ public class AuthContoller {
     }
 
     @DeleteMapping("/refresh-token")
-    public void deleteRefreshToken(HttpServletRequest request, HttpServletResponse response, @AuthenticationPrincipal String userId) {
-        Cookie cookie = new Cookie(jwtUtil.getRefreshTokenName(), null);
-        cookie.setPath("/");  // 쿠키 경로 설정 (애플리케이션의 루트 경로로 설정)
-        cookie.setMaxAge(0);  // 쿠키 만료시간 0으로 설정하여 삭제
-        // 쿠키를 응답에 추가하여 클라이언트에서 삭제되도록 함
-        response.addCookie(cookie);
+    public void deleteRefreshToken(HttpServletResponse response) {
+        ResponseUtil.deleteCookie(response, jwtUtil.getRefreshTokenName());
     }
-
 }
