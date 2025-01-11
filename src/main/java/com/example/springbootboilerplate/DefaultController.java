@@ -16,20 +16,18 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class DefaultController {
 
-    private final JwtUtil jwtUtil;
-
     @GetMapping
     public String root() {
         return "Hello World";
     }
 
     @PreAuthorize("hasRole('USER')")
-    @GetMapping("/user")
+    @GetMapping("/user-role-test")
     public String user() {
         return "you have a user role";
     }
 
-    @GetMapping("/admin")
+    @GetMapping("/admin-role-test")
     @PreAuthorize("hasRole('ADMIN')")
     public String admin() {
         return "you have a admin role";

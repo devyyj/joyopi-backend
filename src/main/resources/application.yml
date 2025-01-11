@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE  # H2 메모리 데이터베이스 연결 URL
+    url: jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE  # H2 메모리 데이터베이스 연결 URL
     driverClassName: org.h2.Driver                                   # H2 데이터베이스 드라이버 클래스
     username: sa                                                      # 데이터베이스 사용자 이름
     password:                                                         # 데이터베이스 비밀번호 -> 없음
@@ -35,7 +35,7 @@ common:
   front-end:
     host: http://localhost:5173
   proxy:
-    enabled: true
+    enabled: false
     host: 172.29.254.15
     port : 3128
 
