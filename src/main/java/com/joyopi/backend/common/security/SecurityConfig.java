@@ -54,9 +54,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/h2-console/**"
-                                , "/"
-                                , "/auth/**"
+                                , "/api"
                                 , "/oauth2/**"
+                                , "/api/auth/**"
+                                , "/api/freeboard/posts/infinite"
                         ).permitAll() // 허용할 경로
                         .anyRequest().authenticated()) // 나머지 경로는 인증 필요
                 .exceptionHandling(exception -> exception

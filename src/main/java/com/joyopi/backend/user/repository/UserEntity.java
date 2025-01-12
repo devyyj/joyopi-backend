@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
         }
 )
 public class UserEntity extends BaseEntity {
+    private String nickName;
     private String oauthProvider;
     private String oauthId;
     private String role;
