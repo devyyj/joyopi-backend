@@ -9,7 +9,7 @@ public class FreeBoardPost {
 
     private Long id;
     private String title;
-    private String body;
+    private String content;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 

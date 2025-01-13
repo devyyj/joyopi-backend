@@ -17,7 +17,7 @@ public class FreeBoardPostEntity extends BaseEntity {
     private String title;
 
     @Column(nullable = false)
-    private String body;
+    private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")

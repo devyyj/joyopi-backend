@@ -1,6 +1,7 @@
 package com.joyopi.backend.freeboard.service;
 
 import com.joyopi.backend.freeboard.domain.FreeBoardPost;
+import com.joyopi.backend.freeboard.dto.FreeBoardPostRequestDto;
 import com.joyopi.backend.freeboard.repository.FreeBoardPostEntity;
 import com.joyopi.backend.freeboard.repository.FreeBoardPostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,17 +39,19 @@ public class FreeBoardPostService {
     }
 
     // 게시글 작성
-    public FreeBoardPost createPost(FreeBoardPost freeBoardPost) {
-        FreeBoardPostEntity freeBoardPostEntity = freeBoardPostMapper.toPostEntity(freeBoardPost);
-        FreeBoardPostEntity savedPost = freeBoardPostRepository.save(freeBoardPostEntity);
+    public FreeBoardPost createPost(FreeBoardPostRequestDto requestDto) {
+        FreeBoardPost freeBoardPost = freeBoardPostMapper.toPost(requestDto);
+        FreeBoardPostEntity postEntity = freeBoardPostMapper.toPostEntity(freeBoardPost);
+        FreeBoardPostEntity savedPost = freeBoardPostRepository.save(postEntity);
         return freeBoardPostMapper.toPost(savedPost);
     }
 
     // 게시글 수정
-    public FreeBoardPost updatePost(Long id, FreeBoardPost freeBoardPost) {
+    public FreeBoardPost updatePost(Long id, FreeBoardPostRequestDto freeBoardPostRequestDTO) {
         if (!freeBoardPostRepository.existsById(id)) {
             throw new IllegalArgumentException("게시글을 찾을 수 없습니다.");
         }
+        FreeBoardPost freeBoardPost = freeBoardPostMapper.toPost(freeBoardPostRequestDTO);
         freeBoardPost.setId(id);
         FreeBoardPostEntity freeBoardPostEntity = freeBoardPostMapper.toPostEntity(freeBoardPost);
         FreeBoardPostEntity updatedPost = freeBoardPostRepository.save(freeBoardPostEntity);

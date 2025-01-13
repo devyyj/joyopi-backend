@@ -1,6 +1,8 @@
 package com.joyopi.backend.freeboard.service;
 
 import com.joyopi.backend.freeboard.domain.FreeBoardPost;
+import com.joyopi.backend.freeboard.dto.FreeBoardPostRequestDto;
+import com.joyopi.backend.freeboard.dto.FreeBoardPostResponseDto;
 import com.joyopi.backend.freeboard.repository.FreeBoardPostEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -21,4 +23,12 @@ public interface FreeBoardPostMapper {
     // Post 도메인 객체를 PostEntity로 변환
     @Mapping(source = "userId", target = "user.id")
     FreeBoardPostEntity toPostEntity(FreeBoardPost freeBoardPost);
+
+    // FreeBoardPost -> FreeBoardPostResponseDTO 변환
+    @Mapping(source = "userId", target = "userId")
+    @Mapping(source = "userNickname", target = "userNickname")
+    FreeBoardPostResponseDto toPostResponseDTO(FreeBoardPost freeBoardPost);
+
+    // FreeBoardPostRequestDTO -> FreeBoardPost 도메인 객체 변환
+    FreeBoardPost toPost(FreeBoardPostRequestDto freeBoardPostRequestDTO);
 }

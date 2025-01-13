@@ -35,7 +35,7 @@ common:
   front-end:
     host: http://localhost:5173
   proxy:
-    enabled: false
+    enabled: true
     host: 172.29.254.15
     port : 3128
 
