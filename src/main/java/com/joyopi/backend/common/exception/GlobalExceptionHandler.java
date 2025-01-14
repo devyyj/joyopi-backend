@@ -41,7 +41,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ExceptionResponseDto<Void>> handleAllExceptions(Exception ex) {
         log.error(ex.toString());
-        ExceptionResponseDto<Void> responseDto = new ExceptionResponseDto<Void>(ex.getMessage(), null);
+        ExceptionResponseDto<Void> responseDto = new ExceptionResponseDto<Void>(HttpStatus.INTERNAL_SERVER_ERROR.toString(), null);
         return new ResponseEntity<>(responseDto, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

@@ -11,23 +11,24 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface FreeBoardPostMapper {
-    // PostEntity를 Post 도메인 객체로 변환
-    @Mapping(source = "user.id", target = "userId")
-    @Mapping(source = "user.nickName", target = "userNickname")
-    FreeBoardPost toPost(FreeBoardPostEntity freeBoardPostEntity);
 
-    // List<PostEntity> -> List<Post> 변환
-    List<FreeBoardPost> toPost(List<FreeBoardPostEntity> postEntities);
+    // FreeBoardPostRequestDto를 FreeBoardPost 도메인 객체로 변환
+    FreeBoardPost toPost(FreeBoardPostRequestDto freeBoardPostRequestDto);
 
-    // Post 도메인 객체를 PostEntity로 변환
-    @Mapping(source = "userId", target = "user.id")
+    // FreeBoardPost 도메인 객체를 FreeBoardPostEntity로 변환
+    @Mapping(source = "userId", target = "user.id") // userId를 user.id로 매핑
     FreeBoardPostEntity toPostEntity(FreeBoardPost freeBoardPost);
 
-    // FreeBoardPost -> FreeBoardPostResponseDTO 변환
-    @Mapping(source = "userId", target = "userId")
-    @Mapping(source = "userNickname", target = "userNickname")
-    FreeBoardPostResponseDto toPostResponseDTO(FreeBoardPost freeBoardPost);
+    // FreeBoardPostEntity를 FreeBoardPost 도메인 객체로 변환
+    @Mapping(source = "user.id", target = "userId") // user.id를 userId로 매핑
+    @Mapping(source = "user.nickName", target = "userNickname") // user.nickName을 userNickname으로 매핑
+    FreeBoardPost toPost(FreeBoardPostEntity freeBoardPostEntity);
 
-    // FreeBoardPostRequestDTO -> FreeBoardPost 도메인 객체 변환
-    FreeBoardPost toPost(FreeBoardPostRequestDto freeBoardPostRequestDTO);
+    // List<FreeBoardPostEntity>를 List<FreeBoardPost>로 변환
+    List<FreeBoardPost> toPost(List<FreeBoardPostEntity> postEntities);
+
+    // FreeBoardPost 도메인 객체를 FreeBoardPostResponseDto로 변환
+    @Mapping(source = "userId", target = "userId") // userId를 userId로 매핑
+    @Mapping(source = "userNickname", target = "userNickname") // userNickname을 userNickname으로 매핑
+    FreeBoardPostResponseDto toPostResponseDTO(FreeBoardPost freeBoardPost);
 }

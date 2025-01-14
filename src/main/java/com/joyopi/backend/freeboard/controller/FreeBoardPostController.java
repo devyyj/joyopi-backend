@@ -20,15 +20,13 @@ import java.util.stream.Collectors;
 public class FreeBoardPostController {
 
     private final FreeBoardPostService freeBoardPostService;
-    private final FreeBoardPostMapper freeBoardPostMapper;
 
     // 페이징 방식으로 게시글 조회
     @GetMapping("/page")
     public ResponseEntity<Page<FreeBoardPostResponseDto>> getPostsPage(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        Page<FreeBoardPost> posts = freeBoardPostService.getPostsWithPaging(page, size);
-        Page<FreeBoardPostResponseDto> responseDTOs = posts.map(freeBoardPostMapper::toPostResponseDTO);
+        Page<FreeBoardPostResponseDto> responseDTOs = freeBoardPostService.getPostsWithPaging(page, size);
         return ResponseEntity.ok(responseDTOs);
     }
 
@@ -37,19 +35,17 @@ public class FreeBoardPostController {
     public ResponseEntity<List<FreeBoardPostResponseDto>> getPostsInfinite(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        List<FreeBoardPost> freeBoardPosts = freeBoardPostService.getPostsWithInfiniteScroll(page, size);
-        List<FreeBoardPostResponseDto> responseDTOs = freeBoardPosts.stream()
-                .map(freeBoardPostMapper::toPostResponseDTO)
-                .collect(Collectors.toList());
+        List<FreeBoardPostResponseDto> responseDTOs = freeBoardPostService.getPostsWithInfiniteScroll(page, size);
         return ResponseEntity.ok(responseDTOs);
     }
 
     // 게시글 작성
     @PostMapping
-    public ResponseEntity<FreeBoardPostResponseDto> createPost(@AuthenticationPrincipal Long userId, @RequestBody FreeBoardPostRequestDto requestDto) {
+    public ResponseEntity<FreeBoardPostResponseDto> createPost(
+            @AuthenticationPrincipal Long userId,
+            @RequestBody FreeBoardPostRequestDto requestDto) {
         requestDto.setUserId(userId);
-        FreeBoardPost freeBoardPost = freeBoardPostService.createPost(requestDto);
-        FreeBoardPostResponseDto responseDTO = freeBoardPostMapper.toPostResponseDTO(freeBoardPost);
+        FreeBoardPostResponseDto responseDTO = freeBoardPostService.createPost(requestDto);
         return ResponseEntity.status(201).body(responseDTO);
     }
 
@@ -57,9 +53,9 @@ public class FreeBoardPostController {
     @PutMapping("/{id}")
     public ResponseEntity<FreeBoardPostResponseDto> updatePost(
             @PathVariable Long id,
-            @RequestBody FreeBoardPostRequestDto freeBoardPostRequestDTO) {
-        FreeBoardPost freeBoardPost = freeBoardPostService.updatePost(id, freeBoardPostRequestDTO);
-        FreeBoardPostResponseDto responseDTO = freeBoardPostMapper.toPostResponseDTO(freeBoardPost);
+            @AuthenticationPrincipal Long userId,
+            @RequestBody FreeBoardPostRequestDto requestDto) {
+        FreeBoardPostResponseDto responseDTO = freeBoardPostService.updatePost(id, userId, requestDto);
         return ResponseEntity.ok(responseDTO);
     }
 
