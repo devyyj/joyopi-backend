@@ -46,8 +46,8 @@ public class FreeBoardPostController {
 
     // 게시글 작성
     @PostMapping
-    public ResponseEntity<FreeBoardPostResponseDto> createPost(@AuthenticationPrincipal String userId, @RequestBody FreeBoardPostRequestDto requestDto) {
-        requestDto.setUserId(Long.parseLong(userId));
+    public ResponseEntity<FreeBoardPostResponseDto> createPost(@AuthenticationPrincipal Long userId, @RequestBody FreeBoardPostRequestDto requestDto) {
+        requestDto.setUserId(userId);
         FreeBoardPost freeBoardPost = freeBoardPostService.createPost(requestDto);
         FreeBoardPostResponseDto responseDTO = freeBoardPostMapper.toPostResponseDTO(freeBoardPost);
         return ResponseEntity.status(201).body(responseDTO);

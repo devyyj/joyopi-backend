@@ -10,7 +10,4 @@ public interface FreeBoardPostRepository extends JpaRepository<FreeBoardPostEnti
 
     // 페이징 방식으로 게시글 목록 조회
     Page<FreeBoardPostEntity> findAll(Pageable pageable);
-
-    // 무한 스크롤 방식으로 게시글 목록 조회 (전체 게시글을 한 번에 가져오는 것과 유사)
-    List<FreeBoardPostEntity> findAllBy(Pageable pageable);
 }

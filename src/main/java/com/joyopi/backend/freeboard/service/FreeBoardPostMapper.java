@@ -11,7 +11,6 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface FreeBoardPostMapper {
-
     // PostEntity를 Post 도메인 객체로 변환
     @Mapping(source = "user.id", target = "userId")
     @Mapping(source = "user.nickName", target = "userNickname")

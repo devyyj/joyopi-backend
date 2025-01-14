@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,7 +34,7 @@ public class FreeBoardPostService {
 
     // 무한스크롤 방식으로 게시글 조회
     public List<FreeBoardPost> getPostsWithInfiniteScroll(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("id")));
         List<FreeBoardPostEntity> postEntities = freeBoardPostRepository.findAll(pageable).getContent();
         return freeBoardPostMapper.toPost(postEntities); // List<PostEntity> -> List<Post> 변환
     }

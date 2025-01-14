@@ -37,8 +37,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             if (StringUtils.hasText(token)) {
                 // user id 가져오기
-                String userId = jwtUtil.getUserId(token);
-                if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                Long userId = Long.parseLong(jwtUtil.getUserId(token));
+                if (SecurityContextHolder.getContext().getAuthentication() == null) {
                     // 사용자 인증 생성
                     UsernamePasswordAuthenticationToken authentication =
                             new UsernamePasswordAuthenticationToken(

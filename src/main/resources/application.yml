@@ -6,20 +6,11 @@ spring:
     driver-class-name: org.mariadb.jdbc.Driver            # MariaDB JDBC 드라이버
 
   jpa:
+    properties:
+      hibernate:
+        format_sql: true
     hibernate:
-      ddl-auto: update                                                # Hibernate의 DDL 자동 업데이트 설정 (테이블 자동 생성 및 수정)
-    show-sql: true                                                     # SQL 쿼리를 콘솔에 출력하도록 설정
-
-#  datasource:
-#    url: jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE  # H2 메모리 데이터베이스 연결 URL
-#    driverClassName: org.h2.Driver                                   # H2 데이터베이스 드라이버 클래스
-#    username: sa                                                      # 데이터베이스 사용자 이름
-#    password:                                                         # 데이터베이스 비밀번호 -> 없음
-
-#  h2:
-#    console:
-#      enabled: true                                                    # H2 콘솔을 활성화하여 브라우저에서 접근 가능하도록 설정
-#      path: /h2-console                                                 # H2 콘솔의 접근 경로
+      ddl-auto: update   # Hibernate의 DDL 자동 업데이트 설정 (테이블 자동 생성 및 수정)
 
   security:
     oauth2:
@@ -62,6 +53,8 @@ logging:
     com.example.springbootboilerplate: DEBUG                           # 특정 패키지의 로그는 DEBUG 레벨로 설정
     org.springframework.security: DEBUG
     org.springframework.web.client: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.orm.jdbc.bind: TRACE
 
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} - %5p [%t] %logger{36} - %msg%n"  # 콘솔에 출력되는 로그 메시지 형식
