@@ -2,6 +2,7 @@ package com.joyopi.backend.auth.service;
 
 import com.joyopi.backend.common.util.JwtUtil;
 import com.joyopi.backend.user.domain.User;
+import com.joyopi.backend.user.dto.UserResponseDto;
 import com.joyopi.backend.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,7 +17,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public String reissueAccessToken(String refreshToken) {
         String userId = jwtUtil.getUserId(refreshToken);
-        User user = userService.getUserById(Long.parseLong(userId));
-        return jwtUtil.generateAccessToken(String.valueOf(user.getId()), user.getRole());
+        UserResponseDto user = userService.getUserById(Long.parseLong(userId));
+        return jwtUtil.generateAccessToken(String.valueOf(user.id()), user.role());
     }
 }

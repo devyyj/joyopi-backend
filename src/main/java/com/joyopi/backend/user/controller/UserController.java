@@ -1,17 +1,12 @@
 package com.joyopi.backend.user.controller;
 
-import com.joyopi.backend.user.domain.User;
+import com.joyopi.backend.user.dto.UserRequestDto;
 import com.joyopi.backend.user.dto.UserResponseDto;
-import com.joyopi.backend.user.service.UserMapper;
 import com.joyopi.backend.user.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/users")
@@ -19,17 +14,21 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
     private final UserService userService;
-    private final UserMapper userMapper;
 
     @GetMapping("/me")
     public ResponseEntity<UserResponseDto> getCurrentUser(@AuthenticationPrincipal Long userId) {
-        User userById = userService.getUserById(userId);
-        return ResponseEntity.ok(userMapper.toResponseDto(userById));
+        UserResponseDto userResponseDto = userService.getUserById(userId);
+        return ResponseEntity.ok(userResponseDto);  // DTO 반환
+    }
+
+    @PatchMapping("/me")
+    public ResponseEntity<UserResponseDto> patchCurrentUser(@AuthenticationPrincipal Long userId, @RequestBody UserRequestDto requestDto) {
+        UserResponseDto updatedUser = userService.updateUser(userId, requestDto);
+        return ResponseEntity.ok(updatedUser);  // DTO 반환
     }
 
     @DeleteMapping("/me")
-    public void deleteUser(@AuthenticationPrincipal Long userId) {
+    public void deleteCurrentUser(@AuthenticationPrincipal Long userId) {
         userService.deleteUser(userId);
     }
-
 }

@@ -1,9 +1,7 @@
 package com.joyopi.backend.freeboard.controller;
 
-import com.joyopi.backend.freeboard.domain.FreeBoardPost;
 import com.joyopi.backend.freeboard.dto.FreeBoardPostRequestDto;
 import com.joyopi.backend.freeboard.dto.FreeBoardPostResponseDto;
-import com.joyopi.backend.freeboard.service.FreeBoardPostMapper;
 import com.joyopi.backend.freeboard.service.FreeBoardPostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -12,7 +10,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/freeboard/posts")
@@ -33,8 +30,8 @@ public class FreeBoardPostController {
     // 무한스크롤 방식으로 게시글 조회
     @GetMapping("/infinite")
     public ResponseEntity<List<FreeBoardPostResponseDto>> getPostsInfinite(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size) {
         List<FreeBoardPostResponseDto> responseDTOs = freeBoardPostService.getPostsWithInfiniteScroll(page, size);
         return ResponseEntity.ok(responseDTOs);
     }

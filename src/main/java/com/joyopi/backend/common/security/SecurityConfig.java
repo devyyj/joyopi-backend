@@ -77,7 +77,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173")); // 클라이언트의 허용된 도메인 (예: React 앱의 주소)
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE")); // 허용할 HTTP 메서드
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE")); // 허용할 HTTP 메서드
         configuration.setAllowedHeaders(Arrays.asList("*")); // 모든 헤더 허용
         configuration.setAllowCredentials(true); // 쿠키를 포함한 요청 허용
         configuration.setMaxAge(3600L); // 캐시 기간 (1시간)

@@ -3,6 +3,8 @@ package com.joyopi.backend.user.service;
 import com.joyopi.backend.common.exception.CustomException;
 import com.joyopi.backend.oauth.OAuthService;
 import com.joyopi.backend.user.domain.User;
+import com.joyopi.backend.user.dto.UserRequestDto;
+import com.joyopi.backend.user.dto.UserResponseDto;
 import com.joyopi.backend.user.repository.UserEntity;
 import com.joyopi.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,37 +24,27 @@ public class UserServiceImpl implements UserService {
     private final OAuthService oAuthService;
 
     @Override
-    public User createUser(User user) {
-        UserEntity entity = userMapper.toEntity(user);
-        UserEntity saved = userRepository.save(entity);
-        return userMapper.toDomain(saved);
-    }
-
-    @Override
-    public User getUserById(Long id) {
-        return userRepository.findById(id)
-                .map(userMapper::toDomain)
+    public UserResponseDto getUserById(Long id) {
+        UserEntity entity = userRepository.findById(id)
                 .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "User not found with id: " + id));
+        return userMapper.toResponseDto(userMapper.toDomain(entity));  // 변환 후 DTO 반환
     }
 
     @Override
-    public List<User> getAllUsers() {
-        return userRepository.findAll().stream().map(userMapper::toDomain).toList();
-    }
-
-    @Override
-    public User updateUser(Long id, User user) {
+    public UserResponseDto updateUser(Long id, UserRequestDto requestDto) {
         UserEntity entity = userRepository.findById(id)
                 .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "User not found with id: " + id));
 
-        // 업데이트, 아직 할 정보가 없음
-
-        return userMapper.toDomain(userRepository.save(entity));
+        // 닉네임 업데이트
+        entity.setNickName(requestDto.nickName());
+        UserEntity updatedEntity = userRepository.save(entity);
+        return userMapper.toResponseDto(userMapper.toDomain(updatedEntity));  // 변환 후 DTO 반환
     }
 
     @Override
     public void deleteUser(Long id) {
-        UserEntity userEntity = userRepository.findById(id).orElseThrow();
+        UserEntity userEntity = userRepository.findById(id)
+                .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "User not found with id: " + id));
         oAuthService.unlink(userEntity.getOauthId(), userEntity.getOauthProvider());
         userRepository.deleteById(id);
     }
@@ -74,6 +66,6 @@ public class UserServiceImpl implements UserService {
         userRepository.save(entity);
 
         // UserEntity -> User 변환 후 반환
-        return userMapper.toDomain(entity);
+        return userMapper.toDomain(entity);  // 도메인 객체 반환
     }
 }
