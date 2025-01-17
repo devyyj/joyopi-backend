@@ -57,6 +57,7 @@ public class UserServiceImpl implements UserService {
         if (entity == null) {
             // 사용자 없으면 새로 생성
             entity = new UserEntity();
+            entity.setNickName(oauthProvider + oauthId);
             entity.setRole("ROLE_USER");
             entity.setOauthProvider(oauthProvider);
             entity.setOauthId(oauthId);

@@ -49,7 +49,7 @@ public class FreeBoardPostController {
     // 게시글 수정
     @PutMapping("/{id}")
     public ResponseEntity<FreeBoardPostResponseDto> updatePost(
-            @PathVariable Long id,
+            @PathVariable("id") Long id,
             @AuthenticationPrincipal Long userId,
             @RequestBody FreeBoardPostRequestDto requestDto) {
         FreeBoardPostResponseDto responseDTO = freeBoardPostService.updatePost(id, userId, requestDto);
@@ -58,7 +58,7 @@ public class FreeBoardPostController {
 
     // 게시글 삭제
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePost(@PathVariable Long id) {
+    public ResponseEntity<Void> deletePost(@PathVariable("id") Long id) {
         freeBoardPostService.deletePost(id);
         return ResponseEntity.noContent().build();
     }

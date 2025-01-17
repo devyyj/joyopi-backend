@@ -1,6 +1,7 @@
 package com.joyopi.backend.user.repository;
 
 import com.joyopi.backend.common.entity.BaseEntity;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
@@ -18,6 +19,7 @@ import java.time.LocalDateTime;
         }
 )
 public class UserEntity extends BaseEntity {
+    @Column(length = 20)
     private String nickName;
     private String oauthProvider;
     private String oauthId;
