@@ -36,7 +36,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "User not found with id: " + id));
 
         // 닉네임 업데이트
-        entity.setNickName(requestDto.nickName());
+        entity.setNickname(requestDto.nickname());
         UserEntity updatedEntity = userRepository.save(entity);
         return userMapper.toResponseDto(userMapper.toDomain(updatedEntity));  // 변환 후 DTO 반환
     }
@@ -57,7 +57,7 @@ public class UserServiceImpl implements UserService {
         if (entity == null) {
             // 사용자 없으면 새로 생성
             entity = new UserEntity();
-            entity.setNickName(oauthProvider + oauthId);
+            entity.setNickname(oauthProvider + oauthId);
             entity.setRole("ROLE_USER");
             entity.setOauthProvider(oauthProvider);
             entity.setOauthId(oauthId);

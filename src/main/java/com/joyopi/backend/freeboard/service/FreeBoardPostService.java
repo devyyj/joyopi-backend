@@ -5,6 +5,7 @@ import com.joyopi.backend.freeboard.dto.FreeBoardPostRequestDto;
 import com.joyopi.backend.freeboard.dto.FreeBoardPostResponseDto;
 import com.joyopi.backend.freeboard.repository.FreeBoardPostEntity;
 import com.joyopi.backend.freeboard.repository.FreeBoardPostRepository;
+import com.joyopi.backend.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -22,6 +23,7 @@ public class FreeBoardPostService {
 
     private final FreeBoardPostRepository freeBoardPostRepository;
     private final FreeBoardPostMapper freeBoardPostMapper;
+    private final UserService userService;
 
     // 페이징 방식으로 게시글 조회
     public Page<FreeBoardPostResponseDto> getPostsWithPaging(int page, int size) {
@@ -48,6 +50,9 @@ public class FreeBoardPostService {
 
     // 게시글 작성
     public FreeBoardPostResponseDto createPost(FreeBoardPostRequestDto requestDto) {
+        String nickname = userService.getUserById(requestDto.getUserId()).nickname();
+        requestDto.setUserNickname(nickname);
+
         // RequestDTO → Domain → Entity 변환 및 저장
         FreeBoardPost freeBoardPost = freeBoardPostMapper.toPost(requestDto);
         FreeBoardPostEntity postEntity = freeBoardPostMapper.toPostEntity(freeBoardPost);
@@ -59,13 +64,13 @@ public class FreeBoardPostService {
     }
 
     // 게시글 수정
-    public FreeBoardPostResponseDto updatePost(Long id, Long userId, FreeBoardPostRequestDto requestDto) {
+    public FreeBoardPostResponseDto updatePost(FreeBoardPostRequestDto requestDto) {
         // 게시글이 존재하는지 확인
-        FreeBoardPostEntity freeBoardPostEntity = freeBoardPostRepository.findById(id)
+        FreeBoardPostEntity freeBoardPostEntity = freeBoardPostRepository.findById(requestDto.getId())
                 .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다."));
 
         // 게시글 작성자와 로그인한 사용자가 일치하는지 확인
-        if (!freeBoardPostEntity.getUser().getId().equals(userId)) {
+        if (!freeBoardPostEntity.getUserId().equals(requestDto.getUserId())) {
             throw new IllegalArgumentException("이 게시글을 수정할 권한이 없습니다.");
         }
 

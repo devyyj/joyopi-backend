@@ -2,8 +2,9 @@ package com.joyopi.backend.freeboard.repository;
 
 
 import com.joyopi.backend.common.entity.BaseEntity;
-import com.joyopi.backend.user.repository.UserEntity;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -19,7 +20,7 @@ public class FreeBoardPostEntity extends BaseEntity {
     @Column(nullable = false, length = 1000)
     private String content;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
-    private UserEntity user;
+    private Long userId;
+
+    private String userNickname;
 }

@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 @Data
 public class User {
     private Long id;
-    private String nickName;
+    private String nickname;
     private String oauthProvider;
     private String oauthId;
     private String role;

@@ -23,7 +23,7 @@ import java.time.LocalDateTime;
 public class UserEntity extends BaseEntity {
 
     @Column(length = 20)
-    private String nickName;
+    private String nickname;
 
     private String oauthProvider;
     private String oauthId;

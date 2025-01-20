@@ -52,7 +52,9 @@ public class FreeBoardPostController {
             @PathVariable("id") Long id,
             @AuthenticationPrincipal Long userId,
             @RequestBody FreeBoardPostRequestDto requestDto) {
-        FreeBoardPostResponseDto responseDTO = freeBoardPostService.updatePost(id, userId, requestDto);
+        requestDto.setId(id);
+        requestDto.setUserId(userId);
+        FreeBoardPostResponseDto responseDTO = freeBoardPostService.updatePost(requestDto);
         return ResponseEntity.ok(responseDTO);
     }
 
