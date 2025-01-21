@@ -15,11 +15,7 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(callSuper = true)
 @SQLDelete(sql = "UPDATE users SET deleted = true WHERE id = ?") // DELETE 대신 UPDATE 실행
 @SQLRestriction("deleted = false") // 조회 시 삭제된 데이터 제외
-@Table(name = "users",
-        uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"oauthProvider", "oauthId"})
-        }
-)
+@Table(name = "users")
 public class UserEntity extends BaseEntity {
 
     @Column(length = 20)
