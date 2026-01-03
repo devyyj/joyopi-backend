@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  backend-dev:
+    image: ${DOCKER_REGISTRY_USER}/joyopi-backend:dev
+    container_name: backend-dev
+    expose:
+      - "8080"
+    environment:
+      DOCKER_REGISTRY_USER: ${DOCKER_REGISTRY_USER}
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_DATASOURCE_URL: jdbc:mariadb://mariadb:3306/joyopi_dev
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: password
+    depends_on:
+      - mariadb
+    restart: always
+    networks:
+      - app-network
+
+  backend-prod:
+    image: ${DOCKER_REGISTRY_USER}/joyopi-backend:prod
+    container_name: backend-prod
+    expose:
+      - "8080"
+    environment:
+      DOCKER_REGISTRY_USER: ${DOCKER_REGISTRY_USER}
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_DATASOURCE_URL: jdbc:mariadb://mariadb:3306/joyopi_prod
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: password
+    depends_on:
+      - mariadb
+    restart: always
+    networks:
+      - app-network
+
+  mariadb:
+    image: mariadb:10.11
+    container_name: mariadb
+    ports:
+      - "3306:3306"
+    environment:
+      MARIADB_ROOT_PASSWORD: password
+    volumes:
+      - mariadb-data:/var/lib/mysql
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    external: true
+
+volumes:
+  mariadb-data:

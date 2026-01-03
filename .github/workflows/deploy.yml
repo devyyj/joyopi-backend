@@ -51,7 +51,26 @@ jobs:
             ${{ env.DOCKER_REGISTRY_USER }}/joyopi-backend:${{ steps.vars.outputs.IMAGE_TAG }}
           file: ./Dockerfile
 
-      # 4. EC2 배포 (SSH 접속 및 스크립트 실행)
+      # 4. EC2에 배포 디렉토리 생성
+      - name: Create deployment directory
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ env.EC2_HOST }}
+          username: ${{ env.EC2_USER }}
+          key: ${{ env.SSH_PRIVATE_KEY }}
+          script: mkdir -p ${{ env.PROJECT_DIR }}
+
+      # 5. docker-compose.yml 파일을 EC2로 복사
+      - name: Copy docker-compose.yml to EC2
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ env.EC2_HOST }}
+          username: ${{ env.EC2_USER }}
+          key: ${{ env.SSH_PRIVATE_KEY }}
+          source: "docker-compose.yml"
+          target: ${{ env.PROJECT_DIR }}
+
+      # 6. EC2 배포 (SSH 접속 및 스크립트 실행)
       - name: Deploy to EC2
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -81,6 +100,13 @@ jobs:
             docker compose pull $SERVICE_NAME
             docker compose up -d --no-deps $SERVICE_NAME
             
+            # Nginx 프록시(frontend 측 관리) 상태 확인 및 리로드
+            # 백엔드 컨테이너가 변경되었으므로 Nginx 프록시에서 이를 인식하도록 리로드
+            if [ "$(docker ps -q -f name=nginx-ssl-web)" ]; then
+              echo "Reloading Nginx Proxy for backend changes..."
+              docker exec nginx-ssl-web nginx -s reload
+            fi
+
             # 사용하지 않는 Docker 이미지 정리
             docker system prune -f
 
