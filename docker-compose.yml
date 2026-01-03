@@ -44,7 +44,6 @@ services:
       MARIADB_ROOT_PASSWORD: password
     volumes:
       - mariadb-data:/var/lib/mysql
-      - ./init-db:/docker-entrypoint-initdb.d
     networks:
       - app-network
 
