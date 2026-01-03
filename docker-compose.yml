@@ -4,8 +4,8 @@ services:
   backend-dev:
     image: ${DOCKER_REGISTRY_USER}/joyopi-backend:dev
     container_name: backend-dev
-    ports:
-      - "8080:8080"
+    expose:
+      - "8080"
     environment:
       DOCKER_REGISTRY_USER: ${DOCKER_REGISTRY_USER}
       SPRING_PROFILES_ACTIVE: dev
@@ -21,8 +21,8 @@ services:
   backend-prod:
     image: ${DOCKER_REGISTRY_USER}/joyopi-backend:prod
     container_name: backend-prod
-    ports:
-      - "8081:8080"
+    expose:
+      - "8080"
     environment:
       DOCKER_REGISTRY_USER: ${DOCKER_REGISTRY_USER}
       SPRING_PROFILES_ACTIVE: prod
