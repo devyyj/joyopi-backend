@@ -19,11 +19,24 @@ public class ParrotHandler extends TextWebSocketHandler {
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final Map<String, WebSocketSession> sessions = new ConcurrentHashMap<>();
     private final Map<String, String> roles = new ConcurrentHashMap<>(); // sessionId -> role (GENERAL, PARROT)
+    private volatile String currentPlayback = null; // Store current TRIGGER_SOUND payload
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         sessions.put(session.getId(), session);
         roles.put(session.getId(), "GENERAL"); // Default role
+
+        // Send welcome message with session ID
+        String welcomeMessage = objectMapper.writeValueAsString(Map.of(
+                "type", "WELCOME",
+                "sessionId", session.getId()));
+        session.sendMessage(new TextMessage(welcomeMessage));
+
+        // If there's an ongoing playback, sync it to the new user
+        if (currentPlayback != null) {
+            session.sendMessage(new TextMessage(currentPlayback));
+        }
+
         broadcastUserList();
     }
 
@@ -43,11 +56,32 @@ public class ParrotHandler extends TextWebSocketHandler {
                 break;
             case "TRIGGER_SOUND":
                 System.out.println("Trigger sound request from: " + session.getId());
-                broadcastToRole("PARROT", data);
+                currentPlayback = payload;
+                broadcastAll(payload);
                 break;
             case "STOP_SOUND":
                 System.out.println("Stop sound request from: " + session.getId());
-                broadcastToRole("PARROT", data);
+                currentPlayback = null;
+                broadcastAll(payload);
+                break;
+            case "PROGRESS_UPDATE":
+                // 앵무새로부터 진행 상황 수신 시 모든 사용자에게 브로드캐스트 및 현재 상태 업데이트
+                if (currentPlayback != null) {
+                    try {
+                        Map<String, Object> playbackData = objectMapper.readValue(currentPlayback, Map.class);
+                        if (data.containsKey("remainingCount")) {
+                            playbackData.put("count", data.get("remainingCount"));
+                        }
+                        if (data.containsKey("remainingDuration")) {
+                            playbackData.put("duration", data.get("remainingDuration"));
+                            playbackData.put("mode", "DURATION"); // 명시적으로 DURATION 모드 유지
+                        }
+                        currentPlayback = objectMapper.writeValueAsString(playbackData);
+                    } catch (Exception e) {
+                        System.err.println("Failed to update currentPlayback: " + e.getMessage());
+                    }
+                }
+                broadcastAll(payload);
                 break;
         }
     }
