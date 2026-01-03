@@ -1,0 +1,33 @@
+# /home/ec2-user/backend/docker-compose.yml 전체 예시
+version: '3.8'
+
+services:
+  backend-dev:
+    image: ${DOCKER_REGISTRY_USER}/joyopi-backend:dev
+    container_name: backend-dev
+    ports:
+      - "8080:8080"
+    environment:
+      # 반드시 들여쓰기를 확인하세요 (must be a mapping)
+      DOCKER_REGISTRY_USER: ${DOCKER_REGISTRY_USER}
+      SPRING_PROFILES_ACTIVE: dev
+    restart: always
+    networks:
+      - app-network
+
+  backend-prod:
+    image: ${DOCKER_REGISTRY_USER}/joyopi-backend:prod
+    container_name: backend-prod
+    ports:
+      - "8081:8080"
+    environment:
+      # backend-prod 부분도 동일하게 수정해야 합니다.
+      DOCKER_REGISTRY_USER: ${DOCKER_REGISTRY_USER}
+      SPRING_PROFILES_ACTIVE: prod
+    restart: always
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    external: true
