@@ -51,7 +51,26 @@ jobs:
             ${{ env.DOCKER_REGISTRY_USER }}/joyopi-backend:${{ steps.vars.outputs.IMAGE_TAG }}
           file: ./Dockerfile
 
-      # 4. EC2 배포 (SSH 접속 및 스크립트 실행)
+      # 4. EC2에 배포 디렉토리 생성
+      - name: Create deployment directory
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ env.EC2_HOST }}
+          username: ${{ env.EC2_USER }}
+          key: ${{ env.SSH_PRIVATE_KEY }}
+          script: mkdir -p ${{ env.PROJECT_DIR }}
+
+      # 5. docker-compose.yml 파일을 EC2로 복사
+      - name: Copy docker-compose.yml to EC2
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ env.EC2_HOST }}
+          username: ${{ env.EC2_USER }}
+          key: ${{ env.SSH_PRIVATE_KEY }}
+          source: "docker-compose.yml"
+          target: ${{ env.PROJECT_DIR }}
+
+      # 6. EC2 배포 (SSH 접속 및 스크립트 실행)
       - name: Deploy to EC2
         uses: appleboy/ssh-action@v1.0.3
         with:
