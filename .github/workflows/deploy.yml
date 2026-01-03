@@ -100,6 +100,13 @@ jobs:
             docker compose pull $SERVICE_NAME
             docker compose up -d --no-deps $SERVICE_NAME
             
+            # Nginx 프록시(frontend 측 관리) 상태 확인 및 리로드
+            # 백엔드 컨테이너가 변경되었으므로 Nginx 프록시에서 이를 인식하도록 리로드
+            if [ "$(docker ps -q -f name=nginx-ssl-web)" ]; then
+              echo "Reloading Nginx Proxy for backend changes..."
+              docker exec nginx-ssl-web nginx -s reload
+            fi
+
             # 사용하지 않는 Docker 이미지 정리
             docker system prune -f
 
