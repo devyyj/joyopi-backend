@@ -24,9 +24,6 @@ target/
 
 # Gradle 관련
 .gradle/
-gradle/
-gradlew
-gradlew.bat
 
 # 테스트 관련
 src/test/
