@@ -1,0 +1,59 @@
+# Git 관련 파일
+.git
+.gitignore
+.gitattributes
+
+# IDE 관련 파일
+.idea
+.vscode
+*.iml
+*.iws
+*.ipr
+.project
+.classpath
+.settings
+
+# 빌드 결과물
+build/
+out/
+target/
+*.class
+*.jar
+*.war
+*.ear
+
+# Gradle 관련
+.gradle/
+gradle/
+gradlew
+gradlew.bat
+
+# 테스트 관련
+src/test/
+*.test
+*.spec
+
+# 로그 파일
+*.log
+logs/
+
+# 임시 파일
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# OS 관련
+.DS_Store
+Thumbs.db
+
+# 문서 파일
+README.md
+*.md
+docs/
+
+# 환경 설정 파일 (필요시 주석 해제)
+# .env
+# application-local.yml
+
