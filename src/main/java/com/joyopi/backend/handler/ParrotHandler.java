@@ -48,6 +48,9 @@ public class ParrotHandler extends TextWebSocketHandler {
         String type = (String) data.get("type");
 
         switch (type) {
+            case "PING":
+                // Just keep the connection alive
+                break;
             case "JOIN":
                 String role = (String) data.get("role");
                 roles.put(session.getId(), role);
